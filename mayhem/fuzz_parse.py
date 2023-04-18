@@ -43,6 +43,7 @@ def exception_handler(exception: Exception, i: int) -> int:
 count = 0
 
 
+@atheris.instrument_func
 def TestOneInput(data):
     global count
     fdp = fh.EnhancedFuzzedDataProvider(data)
