@@ -15,16 +15,17 @@ def exception_handler(exception: Exception, i: int) -> int:
     if isinstance(exception, nx.NetworkXError):
         return -1
     if isinstance(exception, ValueError) and any((s for s in ['Edge specified by marker', 'is malformatted',
-                                                                'specifies a bond between an atom and itself',
-                                                                'Conflicting bond orders for ring between indices',
-                                                                'A hydrogen atom', 'Overwritten by',
-                                                                'before an atom',
-                                                                'You specified an aromatic atom outside of a'] if
-                                                    s in str(exception))):
+                                                              'specifies a bond between an atom and itself',
+                                                              'Conflicting bond orders for ring between indices',
+                                                              'A hydrogen atom', 'Overwritten by',
+                                                              'before an atom',
+                                                              'You specified an aromatic atom outside of a'] if
+                                                  s in str(exception))):
         return -1
     if isinstance(exception, KeyError) and 'ring' in str(exception):
         return -1
     raise exception
+
 
 count = 0
 
