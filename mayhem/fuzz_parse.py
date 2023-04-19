@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import io
 from contextlib import contextmanager
+import random
 
 import atheris
 import sys
@@ -22,8 +23,8 @@ def nostdout():
     sys.stderr = save_stderr
 
 
-def exception_handler(exception: Exception, i: int) -> int:
-    if i < 5000:
+def exception_handler(exception: Exception) -> int:
+    if random.random() > 0.995:
         return -1
     if isinstance(exception, nx.NetworkXError):
         return -1
@@ -40,15 +41,11 @@ def exception_handler(exception: Exception, i: int) -> int:
     raise exception
 
 
-count = 0
-
 
 @atheris.instrument_func
 def TestOneInput(data):
-    global count
     fdp = fh.EnhancedFuzzedDataProvider(data)
     should_read = fdp.ConsumeBool()
-    count += 1
     with nostdout():
         try:
             if should_read:
@@ -65,7 +62,7 @@ def TestOneInput(data):
                                       respect_bond_order=fdp.ConsumeBool(),
                                       max_bond_order=fdp.ConsumeIntInRange(0, 10))
         except Exception as e:
-            exception_handler(e, count)
+            exception_handler(e)
 
 
 def main():
