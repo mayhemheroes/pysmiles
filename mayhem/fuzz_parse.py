@@ -23,7 +23,7 @@ def nostdout():
 
 
 def exception_handler(exception: Exception, i: int) -> int:
-    if i < 50000:
+    if i < 5000:
         return -1
     if isinstance(exception, nx.NetworkXError):
         return -1

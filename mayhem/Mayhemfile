@@ -7,5 +7,5 @@ testsuite:
 cmds:
   - cmd: /src/mayhem/fuzz_parse.py
     libfuzzer: true
-    timeout: 12
+    timeout: 8
 
