@@ -1,9 +1,11 @@
 project: pysmiles
 target: fuzz-parse
+duration: 600
 testsuite:
     - file://mayhem/testsuite
 
 cmds:
   - cmd: /src/mayhem/fuzz_parse.py
     libfuzzer: true
-    timeout: 5
+    timeout: 12
+
