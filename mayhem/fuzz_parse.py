@@ -23,30 +23,15 @@ def nostdout():
     sys.stderr = save_stderr
 
 
-def exception_handler(exception: Exception) -> int:
-    if random.random() > 0.995:
-        return -1
-    if isinstance(exception, nx.NetworkXError):
-        return -1
-    if isinstance(exception, ValueError) and any((s for s in ['Edge specified by marker', 'is malformatted',
-                                                              'specifies a bond between an atom and itself',
-                                                              'Conflicting bond orders for ring between indices',
-                                                              'A hydrogen atom', 'Overwritten by',
-                                                              'before an atom',
-                                                              'You specified an aromatic atom outside of a'] if
-                                                  s in str(exception))):
-        return -1
-    if isinstance(exception, KeyError) and 'ring' in str(exception):
-        return -1
-    raise exception
-
-
+ctr = 0
 
 @atheris.instrument_func
 def TestOneInput(data):
+    global ctr
     fdp = fh.EnhancedFuzzedDataProvider(data)
     should_read = fdp.ConsumeBool()
     with nostdout():
+        ctr += 1
         try:
             if should_read:
                 res = pysmiles.read_smiles(fdp.ConsumeRandomString(),
@@ -62,7 +47,20 @@ def TestOneInput(data):
                                       respect_bond_order=fdp.ConsumeBool(),
                                       max_bond_order=fdp.ConsumeIntInRange(0, 10))
         except Exception as e:
-            exception_handler(e)
+            if isinstance(e, nx.NetworkXError):
+                return -1
+            if isinstance(e, ValueError) and any((s for s in ['Edge specified by marker', 'is malformatted',
+                                                                      'specifies a bond between an atom and itself',
+                                                                      'Conflicting bond orders for ring between indices',
+                                                                      'A hydrogen atom', 'Overwritten by',
+                                                                      'before an atom',
+                                                                      'You specified an aromatic atom outside of a'] if
+                                                          s in str(e))):
+                return -1
+            if isinstance(e, KeyError) and 'ring' in str(e):
+                return -1
+            elif ctr > 50_000:
+                raise e
 
 
 def main():
