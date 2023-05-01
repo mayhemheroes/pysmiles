@@ -59,8 +59,8 @@ def TestOneInput(data):
                 return -1
             if isinstance(e, KeyError) and 'ring' in str(e):
                 return -1
-            elif ctr > 50_000:
-                raise e
+            elif ctr > 10_000:
+                raise
 
 
 def main():
